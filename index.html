@@ -1,1537 +1,185 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROOPASTRA - Virtual Try-On Technology</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roopastra – AI-Powered Virtual Try-On</title>
+  <meta name="description" content="Roopastra: Instant outfit visualization and style recommendations with >80% accuracy. Virtual try-ons for festivals, weddings, casual wear, and more." />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <link
+    href="https://unpkg.com/aos@2.3.4/dist/aos.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pap8d+zY+KU7q8+KjYfZ2K2tTqPNvG5J3MKF6KNlQy6kR9VX3YcFj1tGp0NmucdE/zh0H0EPs5iTusWzLbWC/w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <style>
-    /* Base styles */
-    :root {
-      --purple: #9b87f5;
-      --purple-dark: #7E69AB;
-      --purple-light: #D6BCFA;
-      --magenta: #D946EF;
-      --white: #ffffff;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
-    }
-    
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
+    /* Custom Styles */
     body {
-      font-family: 'Inter', sans-serif;
-      line-height: 1.5;
-      color: var(--gray-800);
-      overflow-x: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      scroll-behavior: smooth;
     }
-    
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      line-height: 1.2;
+    nav.navbar {
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
     }
-    
-    a {
-      text-decoration: none;
-      color: inherit;
-      transition: color 0.3s ease;
-    }
-    
-    /* Utility classes */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    
-    .section-padding {
-      padding: 80px 0;
-    }
-    
-    .text-center {
-      text-align: center;
-    }
-    
-    .mb-2 {
-      margin-bottom: 0.5rem;
-    }
-    
-    .mb-4 {
-      margin-bottom: 1rem;
-    }
-    
-    .mb-6 {
-      margin-bottom: 1.5rem;
-    }
-    
-    .mb-8 {
-      margin-bottom: 2rem;
-    }
-    
-    .mb-12 {
-      margin-bottom: 3rem;
-    }
-    
-    .mb-16 {
-      margin-bottom: 4rem;
-    }
-    
-    .grid {
-      display: grid;
-      gap: 2rem;
-    }
-    
-    .flex {
-      display: flex;
-    }
-    
-    .flex-col {
-      flex-direction: column;
-    }
-    
-    .items-center {
-      align-items: center;
-    }
-    
-    .justify-between {
-      justify-content: space-between;
-    }
-    
-    .gap-4 {
-      gap: 1rem;
-    }
-    
-    .gap-8 {
-      gap: 2rem;
-    }
-    
-    .text-gradient {
-      background: linear-gradient(90deg, #9b87f5 0%, #D946EF 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .gradient-bg {
-      background: linear-gradient(135deg, rgba(155, 135, 245, 0.1) 0%, rgba(217, 70, 239, 0.1) 100%);
-    }
-    
-    .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(90deg, #9b87f5 0%, #7E69AB 100%);
-      color: var(--white);
-    }
-    
-    .btn-primary:hover {
-      background: linear-gradient(90deg, #7E69AB 0%, #9b87f5 100%);
-    }
-    
-    .btn-outline {
-      border: 1px solid var(--purple);
-      color: var(--purple);
-      background: transparent;
-    }
-    
-    .btn-outline:hover {
-      background: rgba(155, 135, 245, 0.1);
-    }
-    
-    .card {
-      background-color: var(--white);
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Animation */
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    
-    .animate-float {
-      animation: float 6s ease-in-out infinite;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .animate-fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-    
-    /* Navbar */
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 100;
-      padding: 1.25rem 0;
-      transition: all 0.3s ease;
-      background-color: transparent;
-    }
-    
-    .navbar.scrolled {
-      background-color: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(5px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 0.75rem 0;
-    }
-    
-    .navbar-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .navbar-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    
-    .navbar-menu {
-      display: flex;
-      gap: 2rem;
-    }
-    
-    .navbar-menu a {
-      font-weight: 500;
-    }
-    
-    .navbar-menu a:hover {
-      color: var(--purple);
-    }
-    
-    .navbar-mobile-toggle {
-      display: none;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.5rem;
-    }
-    
-    /* Hero section */
     .hero {
-      padding-top: 10rem;
-      padding-bottom: 5rem;
+      background: url('images/hero-bg.jpg') center/cover no-repeat;
+      height: 100vh;
       position: relative;
-      overflow: hidden;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
     }
-    
-    .hero-bg {
+    .hero .overlay {
       position: absolute;
       inset: 0;
-      pointer-events: none;
+      background: rgba(0, 0, 0, 0.5);
     }
-    
-    .hero-bg-circle-1 {
-      position: absolute;
-      right: 0;
-      top: 25%;
-      width: 50%;
-      height: 50%;
-      background-color: rgba(214, 188, 250, 0.1);
-      border-radius: 50%;
-      filter: blur(100px);
-    }
-    
-    .hero-bg-circle-2 {
-      position: absolute;
-      left: 25%;
-      bottom: 0;
-      width: 33%;
-      height: 33%;
-      background-color: rgba(155, 135, 245, 0.1);
-      border-radius: 50%;
-      filter: blur(100px);
-    }
-    
-    .hero-content {
-      display: flex;
-      align-items: center;
-      gap: 2.5rem;
+    .hero .content {
       position: relative;
-      z-index: 1;
+      top: 50%;
+      transform: translateY(-50%);
     }
-    
-    .hero-text {
-      flex: 1;
-    }
-    
-    .hero-title {
+    .stat-number {
       font-size: 3rem;
-      margin-bottom: 1.5rem;
-      line-height: 1.2;
+      font-weight: bold;
+      color: #e63946;
     }
-    
-    .hero-description {
-      font-size: 1.125rem;
-      color: var(--gray-700);
-      margin-bottom: 2rem;
-      max-width: 600px;
-    }
-    
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .hero-partners {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .hero-partners-text {
-      font-size: 0.875rem;
-      color: var(--gray-600);
-    }
-    
-    .hero-partners-logos {
-      display: flex;
-      gap: 1.5rem;
-    }
-    
-    .hero-partners-logo {
-      width: 5rem;
-      height: 1.5rem;
-      background-color: var(--gray-200);
-      border-radius: 0.25rem;
-    }
-    
-    .hero-image {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .hero-image-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-    }
-    
-    .hero-image-frame {
-      aspect-ratio: 4/3;
-      border-radius: 0.75rem;
-      overflow: hidden;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      border: 1px solid rgba(155, 135, 245, 0.1);
-      background-image: linear-gradient(to bottom right, rgba(214, 188, 250, 0.2), rgba(217, 70, 239, 0.2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .hero-image-content {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .hero-image-icon {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--purple);
-    }
-    
-    .hero-image-badge {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      right: 1rem;
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(4px);
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    
-    .hero-image-badge-content {
-      display: flex;
-      align-items: center;
-    }
-    
-    .hero-image-badge-dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      background-color: #10b981;
-      border-radius: 50%;
-      margin-right: 0.5rem;
-    }
-    
-    .hero-image-badge-text {
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-    
-    .hero-image-circle {
-      position: absolute;
-      bottom: -1.5rem;
-      right: -1.5rem;
-      width: 6rem;
-      height: 6rem;
-      background-color: var(--purple);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      font-weight: 700;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .hero-image-circle span {
-      font-size: 0.875rem;
-    }
-    
-    /* Features section */
-    .features {
-      position: relative;
-    }
-    
-    .features-header {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-    
-    .features-title {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .features-description {
-      font-size: 1.125rem;
-      color: var(--gray-700);
-    }
-    
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-    }
-    
-    .feature-card {
-      border: 1px solid rgba(155, 135, 245, 0.1);
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(4px);
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-    
-    .feature-card:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
     .feature-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 4rem;
-      height: 4rem;
-      background-color: rgba(155, 135, 245, 0.1);
-      border-radius: 50%;
-      margin-bottom: 1.25rem;
-      color: var(--purple);
-    }
-    
-    .feature-title {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .feature-description {
-      font-size: 0.875rem;
-      color: var(--gray-600);
-    }
-    
-    /* How it works section */
-    .how-it-works {
-      position: relative;
-    }
-    
-    .how-it-works-container {
-      display: flex;
-      gap: 3rem;
-      align-items: center;
-    }
-    
-    .how-it-works-content {
-      flex: 2;
-    }
-    
-    .how-it-works-media {
-      flex: 3;
-    }
-    
-    .how-it-works-title {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .how-it-works-description {
-      font-size: 1.125rem;
-      color: var(--gray-700);
-      margin-bottom: 2rem;
-    }
-    
-    .how-it-works-video {
-      position: relative;
-      aspect-ratio: 16/9;
-      border-radius: 0.75rem;
-      overflow: hidden;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    
-    .how-it-works-video-overlay {
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(to bottom right, var(--purple), var(--magenta));
-      opacity: 0.2;
-    }
-    
-    .how-it-works-video-play {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .how-it-works-video-play-button {
-      width: 4rem;
-      height: 4rem;
-      background-color: var(--white);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-    
-    .how-it-works-video-play-button:hover {
-      transform: scale(1.1);
-    }
-    
-    .how-it-works-video-play-icon {
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 0 10px 16px;
-      border-color: transparent transparent transparent var(--purple);
-      margin-left: 4px;
-    }
-    
-    .how-it-works-video-caption {
-      position: absolute;
-      bottom: 1rem;
-      left: 0;
-      right: 0;
-      text-align: center;
-    }
-    
-    .how-it-works-video-caption-text {
-      display: inline-block;
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(4px);
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--gray-800);
-    }
-    
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    
-    .step {
-      display: flex;
-      gap: 1.5rem;
-      padding: 1.5rem;
-      border-left: 4px solid var(--purple);
-      transition: background-color 0.3s ease;
-    }
-    
-    .step:hover {
-      background-color: rgba(255, 255, 255, 0.5);
-    }
-    
-    .step-number {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--purple);
-      opacity: 0.6;
-    }
-    
-    .step-content {
-      flex: 1;
-    }
-    
-    .step-title {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .step-description {
-      font-size: 0.875rem;
-      color: var(--gray-600);
-      margin-bottom: 0.75rem;
-    }
-    
-    .step-badge {
-      display: inline-block;
-      background-color: rgba(155, 135, 245, 0.1);
-      color: var(--purple-dark);
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-    }
-    
-    /* Testimonials section */
-    .testimonials {
-      position: relative;
-    }
-    
-    .testimonials-header {
-      max-width: 800px;
-      margin: 0 auto;
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-    
-    .testimonials-title {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    .testimonials-description {
-      font-size: 1.125rem;
-      color: var(--gray-700);
-    }
-    
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2rem;
-    }
-    
-    .testimonial-card {
-      border: 1px solid rgba(155, 135, 245, 0.1);
-      background-color: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(4px);
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      transition: all 0.3s ease;
-    }
-    
-    .testimonial-card:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .testimonial-quote {
-      margin-bottom: 1rem;
-      color: var(--purple);
-    }
-    
-    .testimonial-text {
-      font-size: 0.875rem;
-      color: var(--gray-700);
-      margin-bottom: 1.5rem;
-      flex-grow: 1;
-    }
-    
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-    }
-    
-    .testimonial-avatar {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      background-color: var(--purple);
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      margin-right: 0.75rem;
-    }
-    
-    .testimonial-info {
-      flex: 1;
-    }
-    
-    .testimonial-name {
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-    
-    .testimonial-role {
-      font-size: 0.75rem;
-      color: var(--gray-600);
-    }
-    
-    /* CTA section */
-    .cta {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .cta-bg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-    
-    .cta-bg-circle-1 {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 33%;
-      height: 33%;
-      background-color: rgba(155, 135, 245, 0.1);
-      border-radius: 50%;
-      filter: blur(100px);
-    }
-    
-    .cta-bg-circle-2 {
-      position: absolute;
-      right: 25%;
-      top: 0;
-      width: 25%;
-      height: 25%;
-      background-color: rgba(217, 70, 239, 0.1);
-      border-radius: 50%;
-      filter: blur(100px);
-    }
-    
-    .cta-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      background-color: var(--white);
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      border: 1px solid rgba(155, 135, 245, 0.1);
-      position: relative;
-      z-index: 1;
-    }
-    
-    .cta-content {
-      display: flex;
-      flex-direction: column;
-      md-flex-direction: row;
-    }
-    
-    .cta-info {
-      flex: 1;
-      padding: 2rem;
-      background-image: linear-gradient(to bottom right, rgba(155, 135, 245, 0.2), rgba(217, 70, 239, 0.1));
-    }
-    
-    .cta-form {
-      flex: 1;
-      padding: 2rem;
-    }
-    
-    .cta-title {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    
-    .cta-description {
-      color: var(--gray-700);
-      margin-bottom: 2rem;
-    }
-    
-    .cta-features {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    
-    .cta-feature {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    
-    .cta-feature-icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      background-color: rgba(155, 135, 245, 0.2);
-      color: var(--purple);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .cta-feature-text {
-      font-weight: 500;
-    }
-    
-    .cta-form-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-    
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-    
-    .form-input {
-      display: block;
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid rgba(155, 135, 245, 0.2);
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-    }
-    
-    .form-input:focus {
-      outline: none;
-      border-color: var(--purple);
-      box-shadow: 0 0 0 3px rgba(155, 135, 245, 0.2);
-    }
-    
-    .form-submit {
-      display: block;
-      width: 100%;
-      background: linear-gradient(90deg, #9b87f5 0%, #7E69AB 100%);
-      color: var(--white);
-      border: none;
-      border-radius: 0.5rem;
-      padding: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .form-submit:hover {
-      background: linear-gradient(90deg, #7E69AB 0%, #9b87f5 100%);
-    }
-    
-    .cta-form-disclaimer {
-      font-size: 0.75rem;
-      color: var(--gray-500);
-      text-align: center;
-      margin-top: 1rem;
-    }
-    
-    /* Footer */
-    .footer {
-      background-color: var(--gray-50);
-      border-top: 1px solid var(--gray-200);
-      padding: 4rem 0;
-    }
-    
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr repeat(3, 1fr);
-      gap: 2rem;
-    }
-    
-    .footer-brand {
-      margin-bottom: 1rem;
-    }
-    
-    .footer-description {
-      color: var(--gray-600);
-      margin-bottom: 1rem;
-    }
-    
-    .footer-social {
-      display: flex;
-      gap: 1rem;
-    }
-    
-    .footer-social-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 50%;
-      background-color: transparent;
-      transition: all 0.3s ease;
-      color: var(--gray-600);
-    }
-    
-    .footer-social-link:hover {
-      background-color: rgba(155, 135, 245, 0.1);
-      color: var(--purple);
-    }
-    
-    .footer-heading {
-      font-size: 1.125rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-    
-    .footer-links {
-      list-style: none;
-    }
-    
-    .footer-links li {
-      margin-bottom: 0.75rem;
-    }
-    
-    .footer-links a {
-      color: var(--gray-600);
-    }
-    
-    .footer-links a:hover {
-      color: var(--purple);
-    }
-    
-    .footer-bottom {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--gray-200);
-      display: flex;
-      flex-direction: column;
-      md-flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .footer-copyright {
-      color: var(--gray-500);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
-      md-margin-bottom: 0;
-    }
-    
-    .footer-legal {
-      display: flex;
-    }
-    
-    .footer-legal-link {
-      color: var(--gray-500);
-      font-size: 0.875rem;
-      margin-left: 1rem;
-      position: relative;
-    }
-    
-    .footer-legal-link:first-child {
-      margin-left: 0;
-    }
-    
-    /* Responsive styles */
-    @media (max-width: 1024px) {
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .testimonials-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .navbar-menu {
-        display: none;
-      }
-      
-      .navbar-mobile-toggle {
-        display: block;
-      }
-      
-      .hero-content {
-        flex-direction: column;
-      }
-      
-      .hero-title {
-        font-size: 2.5rem;
-      }
-      
-      .hero-cta {
-        flex-direction: column;
-      }
-      
-      .how-it-works-container {
-        flex-direction: column;
-      }
-      
-      .cta-content {
-        flex-direction: column;
-      }
-      
-      .testimonials-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .footer-bottom {
-        flex-direction: column;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .hero-title {
-        font-size: 2rem;
-      }
-      
-      .section-padding {
-        padding: 60px 0;
-      }
+      font-size: 3rem;
+      color: #457b9d;
+    }
+    footer {
+      background: #1d3557;
+      color: #f1faee;
+      padding: 2rem 0;
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar" id="navbar">
-    <div class="container navbar-container">
-      <a href="#" class="navbar-logo">
-        <span class="text-gradient">ROOPASTRA</span>
-      </a>
-      <div class="navbar-menu">
-        <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#testimonials">Testimonials</a>
-        <a href="#contact" class="btn btn-primary">Request Demo</a>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">ROOPASTRA</a>
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navMenu"
+              aria-controls="navMenu"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#accuracy">Accuracy</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+        <a href="#contact" class="btn btn-primary ms-lg-3">Get Started</a>
       </div>
-      <button class="navbar-mobile-toggle">☰</button>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <section class="hero" id="home">
-    <div class="hero-bg">
-      <div class="hero-bg-circle-1"></div>
-      <div class="hero-bg-circle-2"></div>
+  <section class="hero d-flex align-items-center">
+    <div class="overlay"></div>
+    <div class="container text-center content" data-aos="fade-up">
+      <h1 class="display-4 fw-bold">AI-Powered Virtual Try-Ons</h1>
+      <p class="lead">Eliminate physical trials. Enjoy a convenient, hygienic shopping experience.</p>
+      <a href="#features" class="btn btn-lg btn-outline-light mt-3">Learn More</a>
     </div>
+  </section>
+
+  <!-- Key Statistic -->
+  <section id="accuracy" class="py-5 text-center">
+    <div class="container" data-aos="zoom-in">
+      <h2>Instant Outfit Visualization with</h2>
+      <p class="stat-number">>80% Accuracy</p>
+      <p class="text-muted">Trusted by leading retailers for reliability and speed.</p>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-5 bg-light">
     <div class="container">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">
-            Transform Your <span class="text-gradient">Fashion Retail</span> Experience
-          </h1>
-          <p class="hero-description">
-            Our virtual try-on technology lets customers see how clothing looks on them in real-time, increasing sales and reducing returns.
-          </p>
-          <div class="hero-cta">
-            <a href="#contact" class="btn btn-primary">Get Started</a>
-            <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
-          </div>
-          <div class="hero-partners">
-            <p class="hero-partners-text">Trusted by leading retailers:</p>
-            <div class="hero-partners-logos">
-              <div class="hero-partners-logo"></div>
-              <div class="hero-partners-logo"></div>
-              <div class="hero-partners-logo"></div>
-            </div>
+      <h2 class="text-center mb-5" data-aos="fade-up">Our Features</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4" data-aos="fade-right">
+          <div class="text-center p-4 h-100 bg-white rounded shadow-sm">
+            <i class="feature-icon fas fa-brush mb-3"></i>
+            <h5>AI-Powered Style Recommendations</h5>
+            <p>Personalized looks for festivals, weddings, casual wear, and more—boosting satisfaction & sales.</p>
           </div>
         </div>
-        <div class="hero-image">
-          <div class="hero-image-container">
-            <div class="hero-image-frame">
-              <div class="hero-image-content">
-                <div class="hero-image-icon animate-float">
-                  <img src="/images/image-1.jpeg">
-                </div>
-                <div class="hero-image-badge">
-                  <div class="hero-image-badge-content">
-                    <div class="hero-image-badge-dot"></div>
-                    <p class="hero-image-badge-text">Virtual Try-On Active</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="hero-image-circle animate-float">
-              <span>AI Powered</span>
-            </div>
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+          <div class="text-center p-4 h-100 bg-white rounded shadow-sm">
+            <i class="feature-icon fas fa-couch mb-3"></i>
+            <h5>Culturally-Relevant Designs</h5>
+            <p>From traditional attire to modern silhouettes, we’ve got every cultural nuance covered.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4" data-aos="fade-left">
+          <div class="text-center p-4 h-100 bg-white rounded shadow-sm">
+            <i class="feature-icon fas fa-shop mb-3"></i>
+            <h5>Interactive Storefront Displays</h5>
+            <p>Engaging displays that react to customers, offering a truly personalized shopping journey.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features section-padding gradient-bg" id="features">
+  <!-- Showcase / Gallery -->
+  <section class="py-5">
     <div class="container">
-      <div class="features-header">
-        <h2 class="features-title">
-          Revolutionary <span class="text-gradient">Virtual Try-On</span> Technology
-        </h2>
-        <p class="features-description">
-          Enhance the shopping experience with our cutting-edge fashion technology platform
-        </p>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="6" width="20" height="12" rx="2" />
-              <circle cx="12" cy="12" r="4" />
-              <line x1="21" y1="9" x2="22" y2="9" />
-              <line x1="21" y1="15" x2="22" y2="15" />
-              <line x1="2" y1="9" x2="1" y2="9" />
-              <line x1="2" y1="15" x2="1" y2="15" />
-            </svg>
-          </div>
-          <h3 class="feature-title">Real-Time Virtual Try-On</h3>
-          <p class="feature-description">
-            Customers can instantly see how clothes look on them without physically trying them on.
-          </p>
+      <h2 class="text-center mb-5" data-aos="fade-up">See It In Action</h2>
+      <div class="row g-3">
+        <div class="col-md-4" data-aos="flip-left">
+          <img src="images/tryon1.jpg" class="img-fluid rounded" alt="Virtual Try-On 1">
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-          </div>
-          <h3 class="feature-title">Increased Sales Conversion</h3>
-          <p class="feature-description">
-            Boost purchase confidence and reduce cart abandonment with interactive shopping experiences.
-          </p>
+        <div class="col-md-4" data-aos="flip-up">
+          <img src="images/tryon2.jpg" class="img-fluid rounded" alt="Virtual Try-On 2">
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-          </div>
-          <h3 class="feature-title">Reduced Return Rates</h3>
-          <p class="feature-description">
-            Customers make more informed decisions, leading to fewer returns and higher satisfaction.
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          </div>
-          <h3 class="feature-title">Enhanced Customer Experience</h3>
-          <p class="feature-description">
-            Create memorable, shareable shopping moments that attract and retain customers.
-          </p>
+        <div class="col-md-4" data-aos="flip-right">
+          <img src="images/tryon3.jpg" class="img-fluid rounded" alt="Virtual Try-On 3">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- How It Works Section -->
-  <section class="how-it-works section-padding" id="how-it-works">
-    <div class="container">
-      <div class="how-it-works-container">
-        <div class="how-it-works-content">
-          <h2 class="how-it-works-title">
-            How <span class="text-gradient">ROOPASTRA</span> Works
-          </h2>
-          <p class="how-it-works-description">
-            Our simple four-step process transforms your retail space into an interactive shopping destination.
-          </p>
-          <div class="how-it-works-video">
-            <div class="how-it-works-video-overlay"></div>
-            <div class="how-it-works-video-play">
-              <div class="how-it-works-video-play-button">
-                <div class="how-it-works-video-play-icon"></div>
-              </div>
-            </div>
-            <div class="how-it-works-video-caption">
-              <span class="how-it-works-video-caption-text">See it in action</span>
-            </div>
-          </div>
-        </div>
-        <div class="how-it-works-media">
-          <div class="steps">
-            <div class="step">
-              <div class="step-number">01</div>
-              <div class="step-content">
-                <h3 class="step-title">Setup the Hardware</h3>
-                <p class="step-description">
-                  Our simple hardware installation connects seamlessly with your existing store infrastructure.
-                </p>
-                <div class="step-badge">Quick 2-hour setup</div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-number">02</div>
-              <div class="step-content">
-                <h3 class="step-title">Upload Your Inventory</h3>
-                <p class="step-description">
-                  Easily digitize your clothing inventory through our intuitive dashboard.
-                </p>
-                <div class="step-badge">AI-powered automation</div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-number">03</div>
-              <div class="step-content">
-                <h3 class="step-title">Customers Experience the Magic</h3>
-                <p class="step-description">
-                  Shoppers stand in front of the display and see clothing items overlaid on their reflection in real-time.
-                </p>
-                <div class="step-badge">No apps required</div>
-              </div>
-            </div>
-            <div class="step">
-              <div class="step-number">04</div>
-              <div class="step-content">
-                <h3 class="step-title">Analyze & Optimize</h3>
-                <p class="step-description">
-                  Gain insights from comprehensive analytics on customer interactions and preferences.
-                </p>
-                <div class="step-badge">Data-driven decisions</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="testimonials section-padding gradient-bg" id="testimonials">
-    <div class="container">
-      <div class="testimonials-header">
-        <h2 class="testimonials-title">
-          Trusted by <span class="text-gradient">Retail Leaders</span>
-        </h2>
-        <p class="testimonials-description">
-          Hear what our partners have to say about ROOPASTRA's impact on their business
-        </p>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-quote">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.33333 20H4L8 12H6.66667C5.2 12 4 13.2 4 14.6667V14.6667C4 13.2 2.8 12 1.33333 12H0V20H9.33333V20Z" fill="currentColor"/>
-              <path d="M22.6667 20H17.3333L21.3333 12H20C18.5333 12 17.3333 13.2 17.3333 14.6667V14.6667C17.3333 13.2 16.1333 12 14.6667 12H13.3333V20H22.6667V20Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <p class="testimonial-text">
-            ROOPASTRA has transformed our in-store experience. Customer engagement is up by 40% and we've seen a 25% reduction in returns.
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">SJ</div>
-            <div class="testimonial-info">
-              <div class="testimonial-name">Sarah Johnson</div>
-              <div class="testimonial-role">Head of Retail, FashionHub</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-quote">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.33333 20H4L8 12H6.66667C5.2 12 4 13.2 4 14.6667V14.6667C4 13.2 2.8 12 1.33333 12H0V20H9.33333V20Z" fill="currentColor"/>
-              <path d="M22.6667 20H17.3333L21.3333 12H20C18.5333 12 17.3333 13.2 17.3333 14.6667V14.6667C17.3333 13.2 16.1333 12 14.6667 12H13.3333V20H22.6667V20Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <p class="testimonial-text">
-            The virtual try-on technology is incredibly accurate and our customers love the interactive experience. It's been a game-changer for our boutique.
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">MC</div>
-            <div class="testimonial-info">
-              <div class="testimonial-name">Marcus Chen</div>
-              <div class="testimonial-role">Owner, Style Avenue</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-quote">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.33333 20H4L8 12H6.66667C5.2 12 4 13.2 4 14.6667V14.6667C4 13.2 2.8 12 1.33333 12H0V20H9.33333V20Z" fill="currentColor"/>
-              <path d="M22.6667 20H17.3333L21.3333 12H20C18.5333 12 17.3333 13.2 17.3333 14.6667V14.6667C17.3333 13.2 16.1333 12 14.6667 12H13.3333V20H22.6667V20Z" fill="currentColor"/>
-            </svg>
-          </div>
-          <p class="testimonial-text">
-            Implementation was smooth and the support team at ROOPASTRA is exceptional. Our sales associates quickly adapted and now can't imagine working without it.
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">AR</div>
-            <div class="testimonial-info">
-              <div class="testimonial-name">Amelia Rodriguez</div>
-              <div class="testimonial-role">Operations Director, Trendsetter</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta section-padding" id="contact">
-    <div class="cta-bg">
-      <div class="cta-bg-circle-1"></div>
-      <div class="cta-bg-circle-2"></div>
-    </div>
-    <div class="container">
-      <div class="cta-container">
-        <div class="cta-content">
-          <div class="cta-info">
-            <h2 class="cta-title">
-              Ready to Transform Your <span class="text-gradient">Fashion Retail</span> Experience?
-            </h2>
-            <p class="cta-description">
-              Schedule a demo and see how ROOPASTRA's virtual try-on technology can revolutionize your business.
-            </p>
-            <div class="cta-features">
-              <div class="cta-feature">
-                <div class="cta-feature-icon">✓</div>
-                <p class="cta-feature-text">Free installation consultation</p>
-              </div>
-              <div class="cta-feature">
-                <div class="cta-feature-icon">✓</div>
-                <p class="cta-feature-text">Custom ROI calculation</p>
-              </div>
-              <div class="cta-feature">
-                <div class="cta-feature-icon">✓</div>
-                <p class="cta-feature-text">Flexible pricing plans</p>
-              </div>
-            </div>
-          </div>
-          <div class="cta-form">
-            <h3 class="cta-form-title">Request Your Demo</h3>
-            <form>
-              <div class="form-group">
-                <input type="text" class="form-input" placeholder="Full Name">
-              </div>
-              <div class="form-group">
-                <input type="email" class="form-input" placeholder="Email Address">
-              </div>
-              <div class="form-group">
-                <input type="text" class="form-input" placeholder="Company Name">
-              </div>
-              <div class="form-group">
-                <input type="tel" class="form-input" placeholder="Phone Number">
-              </div>
-              <button type="submit" class="form-submit">Schedule Demo</button>
-            </form>
-            <p class="cta-form-disclaimer">
-              By submitting this form, you agree to our Privacy Policy and Terms of Service.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-brand">
-            <span class="text-gradient" style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700;">ROOPASTRA</span>
-          </div>
-          <p class="footer-description">
-            Transforming the fashion retail experience with cutting-edge virtual try-on technology.
-          </p>
-          <div class="footer-social">
-            <a href="#" class="footer-social-link">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
-              </svg>
-            </a>
-            <a href="#" class="footer-social-link">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
-              </svg>
-            </a>
-            <a href="#" class="footer-social-link">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-        <div>
-          <h3 class="footer-heading">Solutions</h3>
-          <ul class="footer-links">
-            <li><a href="#">Virtual Try-On</a></li>
-            <li><a href="#">Retail Analytics</a></li>
-            <li><a href="#">Inventory Management</a></li>
-            <li><a href="#">Customer Insights</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="footer-heading">Company</h3>
-          <ul class="footer-links">
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="footer-heading">Resources</h3>
-          <ul class="footer-links">
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Support</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p class="footer-copyright">
-          © <script>document.write(new Date().getFullYear())</script> ROOPASTRA. All rights reserved.
-        </p>
-        <div class="footer-legal">
-          <a href="#" class="footer-legal-link">Privacy Policy</a>
-          <a href="#" class="footer-legal-link">Terms of Service</a>
-        </div>
-      </div>
+  <!-- Contact / Footer -->
+  <footer id="contact">
+    <div class="container text-center">
+      <h4 data-aos="fade-up">Ready to Transform Your Retail Experience?</h4>
+      <p data-aos="fade-up" data-aos-delay="100">Reach out for a demo or to discuss integration.</p>
+      <p data-aos="fade-up" data-aos-delay="200">
+        <a href="mailto:hello@roopastra.com" class="text-white me-3"><i class="fas fa-envelope"></i> hello@roopastra.com</a>
+        <a href="tel:+1234567890" class="text-white"><i class="fas fa-phone"></i> +1 (234) 567-890</a>
+      </p>
+      <p class="mt-4 small">&copy; 2025 Roopastra. All rights reserved.</p>
     </div>
   </footer>
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+AMvv5c/+Uj8fsUK7+gXuFAFlCJoZ"
+    crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const navbar = document.getElementById('navbar');
-      if (window.scrollY > 20) {
-        navbar.classList.add('scrolled');
-      } else {
-        navbar.classList.remove('scrolled');
-      }
-    });
-    
-    // Mobile menu toggle
-    const mobileMenuButton = document.querySelector('.navbar-mobile-toggle');
-    
-    if (mobileMenuButton) {
-      let mobileMenuOpen = false;
-      let mobileMenu = null;
-      
-      mobileMenuButton.addEventListener('click', function() {
-        if (mobileMenuOpen) {
-          // Close menu
-          if (mobileMenu) {
-            mobileMenu.remove();
-            mobileMenuOpen = false;
-            mobileMenuButton.textContent = '☰';
-          }
-        } else {
-          // Open menu
-          mobileMenu = document.createElement('div');
-          mobileMenu.classList.add('animate-fade-in');
-          mobileMenu.style.position = 'absolute';
-          mobileMenu.style.top = '100%';
-          mobileMenu.style.left = '0';
-          mobileMenu.style.width = '100%';
-          mobileMenu.style.backgroundColor = 'white';
-          mobileMenu.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-          mobileMenu.style.zIndex = '50';
-          mobileMenu.style.padding = '1rem';
-          
-          mobileMenu.innerHTML = `
-            <div class="container">
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <a href="#features" style="padding: 0.5rem 0; font-weight: 500;">Features</a>
-                <a href="#how-it-works" style="padding: 0.5rem 0; font-weight: 500;">How It Works</a>
-                <a href="#testimonials" style="padding: 0.5rem 0; font-weight: 500;">Testimonials</a>
-                <a href="#contact" class="btn btn-primary" style="margin-top: 0.5rem;">Request Demo</a>
-              </div>
-            </div>
-          `;
-          
-          document.querySelector('.navbar').appendChild(mobileMenu);
-          mobileMenuOpen = true;
-          mobileMenuButton.textContent = '✕';
-          
-          // Add click event listeners to menu items to close menu when clicked
-          mobileMenu.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function() {
-              mobileMenu.remove();
-              mobileMenuOpen = false;
-              mobileMenuButton.textContent = '☰';
-            });
-          });
-        }
-      });
-    }
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          window.scrollTo({
-            top: targetElement.offsetTop - 80,
-            behavior: 'smooth'
-          });
-        }
-      });
+    AOS.init({
+      duration: 800,
+      once: true
     });
   </script>
 </body>
